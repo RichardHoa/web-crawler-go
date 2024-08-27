@@ -13,6 +13,12 @@ func (config *Config) CrawlPage(rawCurrentURL string) {
 		config.wg.Done()
 	}()
 
+
+	reachedMaxPages := config.checkMaxPages()
+	if reachedMaxPages {
+		fmt.Printf("reached max pages: %d\n", config.maxPages)
+		return
+	}
 	// Get the host out of the config struct
 	baseDomain := config.baseURL.Host
 	currentDomain := GetDomain(rawCurrentURL)
@@ -29,7 +35,7 @@ func (config *Config) CrawlPage(rawCurrentURL string) {
 	isFirstVisit := config.addPageVisit(normalizedCurrentURL)
 	if !isFirstVisit {
 		return
-	} 
+	}
 
 	// Getting the HTML page
 	htmlPage, err := GetHTML(rawCurrentURL)
@@ -72,4 +78,10 @@ func (cfg *Config) addPageVisit(normalizedURL string) (isFirst bool) {
 		cfg.pages[normalizedURL]++
 		return false
 	}
+}
+
+func (cfg *Config) checkMaxPages() (reachedMaxPages bool) {
+	cfg.mu.Lock()
+	defer cfg.mu.Unlock()
+	return len(cfg.pages) >= cfg.maxPages
 }
