@@ -16,7 +16,7 @@ func (config *Config) CrawlPage(rawCurrentURL string) {
 
 	reachedMaxPages := config.checkMaxPages()
 	if reachedMaxPages {
-		fmt.Printf("reached max pages: %d\n", config.maxPages)
+		// fmt.Printf("reached max pages: %d\n", config.maxPages)
 		return
 	}
 	// Get the host out of the config struct
@@ -49,7 +49,7 @@ func (config *Config) CrawlPage(rawCurrentURL string) {
 	if err != nil {
 		_ = fmt.Errorf("error getting links from html: %s", err)
 	}
-	fmt.Printf("Found %d links in the website: %s\n", len(links), rawCurrentURL)
+	// fmt.Printf("Found %d links in the website: %s\n", len(links), rawCurrentURL)
 	for _, link := range links {
 		config.wg.Add(1)
 		go config.CrawlPage(link)
